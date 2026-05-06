@@ -270,7 +270,6 @@ main {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0,0,0,0.5);
-  display: none;
   justify-content: center;
   align-items: center;
   z-index: 9999;
@@ -318,6 +317,13 @@ main {
   color: var(--color-text-light);
   font-weight: bold;
   text-transform: uppercase;
+}
+
+.modal-selected-date {
+  margin: 0 0 var(--spacing-lg);
+  color: var(--color-text-medium);
+  font-size: var(--font-size-sm);
+  text-align: center;
 }
 
 .modal-close-btn {

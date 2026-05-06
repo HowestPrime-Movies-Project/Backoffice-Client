@@ -32,10 +32,21 @@
   border-color: var(--color-primary);
 }
 
+.selected-day {
+  background-color: rgba(68, 200, 245, 0.15);
+  border-color: var(--color-primary);
+  box-shadow: inset 0 0 0 2px var(--color-primary);
+}
+
 .disabled-day {
   cursor: not-allowed;
   opacity: 0.9;
   background-color: var(--color-border); /* Using #ECECEC from the color system */
+}
+
+.current-day {
+  border-color: var(--color-accent);
+    box-shadow: 0 0 2px var(--color-accent);
 }
 
 .disabled-day:hover {
@@ -112,11 +123,11 @@
 }
 
 .room-legend-blue {
-  background-color: var(--color-primary);
+   background-color: var(--color-primary);
 }
 
 .room-legend-yellow {
-  background-color: var(--color-accent);
+   background-color: var(--color-accent);
 }
 
 .event {
@@ -129,11 +140,11 @@
   font-weight: bold;
 }
 
-.event-room1 {
+.event-blue {
   background-color: var(--color-primary);
 }
 
-.event-room2 {
+.event-yellow {
   background-color: var(--color-accent);
   color: var(--color-dark);
 }
@@ -145,7 +156,7 @@
 .day-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing);
+  gap: var(--spacing-sm);
   list-style-type: none;
   margin: 0;
   padding: 0;
