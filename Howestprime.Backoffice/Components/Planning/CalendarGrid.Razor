@@ -1,0 +1,71 @@
+<div class="calendar-grid">
+	<div class="day-name">Mon</div>
+	<div class="day-name">Tue</div>
+	<div class="day-name">Wed</div>
+	<div class="day-name">Thu</div>
+	<div class="day-name">Fri</div>
+	<div class="day-name">Sat</div>
+	<div class="day-name">Sun</div>
+</div>
+
+<div class="calendar-grid" id="calendarDays">
+	@foreach (var day in Days)
+	{
+		if (day.IsBlank || !day.Date.HasValue)
+		{
+			<div class="day-cell empty-day @(IsDateInPast(day.Date) ? "disabled-day" : string.Empty)" aria-hidden="true"></div>
+		}
+		else
+		{
+			if (IsDateInPast(day.Date))
+			{
+				<div class="day-cell disabled-day">
+					<span class="date-number">@day.DayNumber</span>
+					<div class="day-events">
+						@foreach (var movieEvent in day.CalendarEvents)
+						{
+							<div class="event @movieEvent.CssClass">
+								<div class="event-title">@movieEvent.Showtime.ToString("HH:mm") @movieEvent.Title</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
+			else
+			{
+				<div
+					class="day-cell @(day.IsSelected ? "selected-day" : string.Empty) @(day.Date.Value.Date == DateTime.UtcNow.Date ? "current-day" : string.Empty)"
+					@onclick="() => HandleDayClick(day.Date.Value)">
+					<span class="date-number">@day.DayNumber</span>
+					<div class="day-events">
+						@foreach (var movieEvent in day.CalendarEvents)
+						{
+							<div class="event @movieEvent.CssClass">
+								<div class="event-title">@movieEvent.Showtime.ToString("HH:mm") @movieEvent.Title</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
+		}
+	}
+</div>
+
+@code {
+	[Parameter]
+	public IReadOnlyList<DayViewModel> Days { get; set; } = Array.Empty<DayViewModel>();
+
+	[Parameter]
+	public EventCallback<DateTime> OnDayClick { get; set; }
+
+	private bool IsDateInPast(DateTime? date)
+	{
+		if (!date.HasValue) return false;
+		return date.Value.Date < DateTime.UtcNow.Date;
+	}
+	
+	private async Task HandleDayClick(DateTime date)
+	{
+		await OnDayClick.InvokeAsync(date);
+	}
+}

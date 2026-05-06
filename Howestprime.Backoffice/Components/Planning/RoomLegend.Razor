@@ -1,0 +1,16 @@
+<div class="room-legend">
+	@foreach (var legend in Legends)
+	{
+		<div class="room-legend-item">
+			<div class="room-legend-color @legend.CssClass"></div>
+			<span>@legend.Label</span>
+		</div>
+	}
+</div>
+
+@code {
+	[Parameter]
+	public IReadOnlyList<RoomLegendViewModel> Legends { get; set; } = Array.Empty<RoomLegendViewModel>();
+}
+
+

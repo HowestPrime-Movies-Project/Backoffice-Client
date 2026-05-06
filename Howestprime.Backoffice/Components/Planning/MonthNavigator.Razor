@@ -1,0 +1,18 @@
+<div class="month-nav">
+	<button type="button" class="prev-month" @onclick="OnPreviousMonth">&larr;</button>
+	<h2 class="month-year">@Month.DisplayName</h2>
+	<button type="button" class="next-month" @onclick="OnNextMonth">&rarr;</button>
+</div>
+
+@code {
+	[Parameter]
+	public MonthViewModel Month { get; set; } = new();
+
+	[Parameter]
+	public EventCallback OnPreviousMonth { get; set; }
+
+	[Parameter]
+	public EventCallback OnNextMonth { get; set; }
+}
+
+

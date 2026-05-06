@@ -1,0 +1,126 @@
+@if (ViewModel.IsOpen)
+{
+	<div class="modal-overlay active" id="addEventModal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<i class="fa-solid fa-clapperboard"></i>
+				<h2>Add Movie Event</h2>
+				<button type="button" class="modal-close-btn" @onclick="HandleClose">×</button>
+			</div>
+			<p class="modal-selected-date">@ViewModel.SelectedDateLabel</p>
+			<form class="modal-form" id="modalForm" @onsubmit="HandleSave" @onsubmit:preventDefault="true">
+        
+				<div class="form-group">
+					<label for="modalRoom">Room</label>
+					<select id="modalRoom" class="form-control" required @bind="Room">
+						<option value="">-- Choose a Room --</option>
+						@foreach (var room in ViewModel.Rooms)
+						{
+							<option value="@room.Value">@room.Label</option>
+						}
+					</select>
+				</div>
+        
+				<div class="form-group">
+					<label for="modalTime">Time</label>
+					<select id="modalTime" class="form-control" required @bind="Time">
+						<option value="">-- Choose a Time --</option>
+						@foreach (var time in ViewModel.Times)
+						{
+							<option value="@time">@time</option>
+						}
+					</select>
+				</div>
+        
+				<div class="form-group">
+					<label for="modalMovie">Movie</label>
+					<select id="modalMovie" class="form-control" required @bind="Movie">
+						<option value="">-- Choose a Movie --</option>
+						@foreach (var movie in ViewModel.Movies)
+						{
+							<option value="@movie.Value">@movie.Label</option>
+						}
+					</select>
+				</div>
+        
+				<button type="submit" class="modal-submit-btn">Save Event</button>
+			</form>
+		</div>
+	</div>
+
+}
+
+@code {
+	[Parameter]
+	public EventViewModel ViewModel { get; set; } = new();
+
+	[Parameter]
+	public EventCallback OnClose { get; set; }
+
+	[Parameter]
+	public EventCallback<ScheduleMovieEventRequest> OnSave { get; set; }
+
+	public string? Movie { get; set; }
+	private string? Time { get; set; }
+	public string? Room { get; set; }
+
+	private Task HandleClose()
+	{
+		Movie = null;
+		Time = null;
+		Room = null;
+		return OnClose.InvokeAsync();
+	}
+
+	private Task HandleSave()
+	{
+		if (!TryBuildRequest(out var request))
+		{
+			return Task.CompletedTask;
+		}
+
+		return OnSave.InvokeAsync(request);
+	}
+
+	private bool TryBuildRequest(out ScheduleMovieEventRequest request)
+	{
+		request = new ScheduleMovieEventRequest();
+
+		if (ViewModel.SelectedDate is null ||
+			!Guid.TryParse(Movie, out var movieId) ||
+			!Guid.TryParse(Room, out var roomId) ||
+			string.IsNullOrWhiteSpace(Time))
+		{
+			return false;
+		}
+
+		if (!TimeSpan.TryParseExact(Time, @"hh\:mm", System.Globalization.CultureInfo.InvariantCulture, out var timeOfDay) &&
+		    !TimeSpan.TryParseExact(Time, @"h\:mm", System.Globalization.CultureInfo.InvariantCulture, out timeOfDay))
+		{
+			// Working with an && here for future support for other event times.
+			return false;
+		}
+
+		request.MovieId = movieId;
+		request.RoomId = roomId;
+
+		// Build a proper UTC DateTime explicitly
+		var dateTime = new DateTime(
+			ViewModel.SelectedDate.Value.Year,
+			ViewModel.SelectedDate.Value.Month,
+			ViewModel.SelectedDate.Value.Day,
+			timeOfDay.Hours,
+			timeOfDay.Minutes,
+			0,
+			DateTimeKind.Utc);
+
+		Console.WriteLine();
+		Console.WriteLine(dateTime.ToString());
+		Console.WriteLine(new DateTimeOffset(dateTime).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+		Console.WriteLine();
+
+		request.Showtime = new DateTimeOffset(dateTime);
+
+		return true;
+	}
+}
