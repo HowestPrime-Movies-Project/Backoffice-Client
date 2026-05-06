@@ -1,0 +1,38 @@
+@page "/"
+@rendermode InteractiveServer
+<link rel="stylesheet" href="css/planning.css" />
+<div class="app-container">
+    <header class="app-header">
+        <i class="fa-solid fa-clapperboard"></i>
+        <h1>Movie Events</h1>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="#" class="active">Plan</a></li>
+                <li><a href="#">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="app-content">
+        <div class="month-nav-container">
+            <RoomLegend Legends="@ViewModel.RoomLegends" />
+
+            <MonthNavigator Month="@ViewModel.Month"
+                            OnPreviousMonth="@(() => ChangeMonth(-1))"
+                            OnNextMonth="@(() => ChangeMonth(1))" />
+
+            <div style="width: 100px;"></div>
+        </div>
+
+        <CalendarGrid Days="@ViewModel.Days"
+                      OnDayClick="@OpenEventModal" />
+    </main>
+
+    <footer class="app-footer">
+        <h2>Howest prime - backoffice</h2>
+    </footer>
+</div>
+
+<EventModal ViewModel="@ViewModel.EventModal"
+            OnClose="CloseEventModal"
+            OnSave="SaveEvent" />
