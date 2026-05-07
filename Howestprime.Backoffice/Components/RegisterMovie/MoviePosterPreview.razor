@@ -1,0 +1,28 @@
+<div class="image-preview-container">
+    <h2>Poster Image Preview</h2>
+    @if (!string.IsNullOrEmpty(CurrentPosterUrl))
+    {
+        <div class="image-preview">
+            <img src="@CurrentPosterUrl" alt="Movie Poster" />
+        </div>
+    }
+    else
+    {
+        <div class="image-placeholder">
+            <p>No poster URL provided.</p>
+        </div>
+    }
+</div>
+
+@code {
+    private string CurrentPosterUrl { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PosterUrl { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        CurrentPosterUrl = PosterUrl;
+    }
+}
+

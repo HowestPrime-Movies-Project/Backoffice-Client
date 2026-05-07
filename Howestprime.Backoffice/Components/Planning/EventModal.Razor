@@ -8,43 +8,48 @@
 				<button type="button" class="modal-close-btn" @onclick="HandleClose">×</button>
 			</div>
 			<p class="modal-selected-date">@ViewModel.SelectedDateLabel</p>
-			<form class="modal-form" id="modalForm" @onsubmit="HandleSave" @onsubmit:preventDefault="true">
-        
+			
+			<EditForm Model="@FormModel" OnValidSubmit="@HandleValidSave" class="modal-form">
+				<DataAnnotationsValidator />
+				
 				<div class="form-group">
 					<label for="modalRoom">Room</label>
-					<select id="modalRoom" class="form-control" required @bind="Room">
+					<InputSelect id="modalRoom" class="form-control" @bind-Value="FormModel.RoomId">
 						<option value="">-- Choose a Room --</option>
 						@foreach (var room in ViewModel.Rooms)
 						{
 							<option value="@room.Value">@room.Label</option>
 						}
-					</select>
+					</InputSelect>
+					<ValidationMessage For="@(() => FormModel.RoomId)" />
 				</div>
-        
+				
 				<div class="form-group">
 					<label for="modalTime">Time</label>
-					<select id="modalTime" class="form-control" required @bind="Time">
+					<InputSelect id="modalTime" class="form-control" @bind-Value="FormModel.Time">
 						<option value="">-- Choose a Time --</option>
 						@foreach (var time in ViewModel.Times)
 						{
 							<option value="@time">@time</option>
 						}
-					</select>
+					</InputSelect>
+					<ValidationMessage For="@(() => FormModel.Time)" />
 				</div>
-        
+				
 				<div class="form-group">
 					<label for="modalMovie">Movie</label>
-					<select id="modalMovie" class="form-control" required @bind="Movie">
+					<InputSelect id="modalMovie" class="form-control" @bind-Value="FormModel.MovieId">
 						<option value="">-- Choose a Movie --</option>
 						@foreach (var movie in ViewModel.Movies)
 						{
 							<option value="@movie.Value">@movie.Label</option>
 						}
-					</select>
+					</InputSelect>
+					<ValidationMessage For="@(() => FormModel.MovieId)" />
 				</div>
-        
+				
 				<button type="submit" class="modal-submit-btn">Save Event</button>
-			</form>
+			</EditForm>
 		</div>
 	</div>
 
@@ -60,26 +65,27 @@
 	[Parameter]
 	public EventCallback<ScheduleMovieEventRequest> OnSave { get; set; }
 
-	public string? Movie { get; set; }
-	private string? Time { get; set; }
-	public string? Room { get; set; }
+	private ScheduleMovieEventFormModel FormModel { get; set; } = new();
 
-	private Task HandleClose()
+	private async Task HandleClose()
 	{
-		Movie = null;
-		Time = null;
-		Room = null;
-		return OnClose.InvokeAsync();
+		FormModel = new ScheduleMovieEventFormModel();
+		await OnClose.InvokeAsync();
 	}
 
-	private Task HandleSave()
+	private async Task HandleValidSave()
 	{
 		if (!TryBuildRequest(out var request))
 		{
-			return Task.CompletedTask;
+			return;
 		}
 
-		return OnSave.InvokeAsync(request);
+		// Invoke the save callback
+		await OnSave.InvokeAsync(request);
+
+		// Clear the form after successful submission
+		FormModel = new ScheduleMovieEventFormModel();
+		StateHasChanged();
 	}
 
 	private bool TryBuildRequest(out ScheduleMovieEventRequest request)
@@ -87,15 +93,15 @@
 		request = new ScheduleMovieEventRequest();
 
 		if (ViewModel.SelectedDate is null ||
-			!Guid.TryParse(Movie, out var movieId) ||
-			!Guid.TryParse(Room, out var roomId) ||
-			string.IsNullOrWhiteSpace(Time))
+			!Guid.TryParse(FormModel.MovieId, out var movieId) ||
+			!Guid.TryParse(FormModel.RoomId, out var roomId) ||
+			string.IsNullOrWhiteSpace(FormModel.Time))
 		{
 			return false;
 		}
 
-		if (!TimeSpan.TryParseExact(Time, @"hh\:mm", System.Globalization.CultureInfo.InvariantCulture, out var timeOfDay) &&
-		    !TimeSpan.TryParseExact(Time, @"h\:mm", System.Globalization.CultureInfo.InvariantCulture, out timeOfDay))
+		if (!TimeSpan.TryParseExact(FormModel.Time, @"hh\:mm", System.Globalization.CultureInfo.InvariantCulture, out var timeOfDay) &&
+		    !TimeSpan.TryParseExact(FormModel.Time, @"h\:mm", System.Globalization.CultureInfo.InvariantCulture, out timeOfDay))
 		{
 			// Working with an && here for future support for other event times.
 			return false;
@@ -113,11 +119,6 @@
 			timeOfDay.Minutes,
 			0,
 			DateTimeKind.Utc);
-
-		Console.WriteLine();
-		Console.WriteLine(dateTime.ToString());
-		Console.WriteLine(new DateTimeOffset(dateTime).ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-		Console.WriteLine();
 
 		request.Showtime = new DateTimeOffset(dateTime);
 

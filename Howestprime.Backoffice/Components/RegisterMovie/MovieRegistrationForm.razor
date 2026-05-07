@@ -1,0 +1,87 @@
+@using Howestprime.Backoffice.ViewModels.Movie
+
+<EditForm Model="@RegistrationModel" OnValidSubmit="@OnValidSubmit" class="form-container">
+    <DataAnnotationsValidator />
+    
+    <div class="form-group">
+        <label for="title">Title</label>
+        <InputText id="title" class="form-control" @bind-Value="RegistrationModel.Title" />
+        <ValidationMessage For="@(() => RegistrationModel.Title)" />
+    </div>
+
+    <div class="form-group">
+        <label for="genres">Genres</label>
+        <InputText id="genres" class="form-control" @bind-Value="RegistrationModel.Genres" placeholder="Comma-separated genres" />
+        <ValidationMessage For="@(() => RegistrationModel.Genres)" />
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <InputTextArea id="description" class="form-control" @bind-Value="RegistrationModel.Description" />
+        <ValidationMessage For="@(() => RegistrationModel.Description)" />
+    </div>
+
+    <div class="form-group">
+        <label for="releaseYear">Release Year</label>
+        <InputNumber id="releaseYear" class="form-control" @bind-Value="RegistrationModel.ReleaseYear" />
+        <ValidationMessage For="@(() => RegistrationModel.ReleaseYear)" />
+    </div>
+
+    <div class="form-group">
+        <label for="duration">Duration (minutes)</label>
+        <InputNumber id="duration" class="form-control" @bind-Value="RegistrationModel.Duration" />
+        <ValidationMessage For="@(() => RegistrationModel.Duration)" />
+    </div>
+
+    <div class="form-group">
+        <label for="actors">Actors</label>
+        <InputText id="actors" class="form-control" @bind-Value="RegistrationModel.Actors" placeholder="Comma-separated actors" />
+        <ValidationMessage For="@(() => RegistrationModel.Actors)" />
+    </div>
+
+    <div class="form-group">
+        <label for="ageRating">Age Rating</label>
+        <InputNumber id="ageRating" class="form-control" @bind-Value="RegistrationModel.AgeRating" />
+        <ValidationMessage For="@(() => RegistrationModel.AgeRating)" />
+    </div>
+
+    <div class="form-group">
+        <label for="posterUrl">Poster URL</label>
+        <InputText id="posterUrl" class="form-control" @bind-Value="RegistrationModel.PosterUrl" @onchange="OnPosterUrlChangedHandler" />
+        <ValidationMessage For="@(() => RegistrationModel.PosterUrl)" />
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="submit-button" disabled="@IsSubmitting">
+            @if (IsSubmitting)
+            {
+                <span><i class="fa-solid fa-spinner fa-spin"></i> Registering...</span>
+            }
+            else
+            {
+                <span>Register Movie</span>
+            }
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public MovieRegistration RegistrationModel { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    public EventCallback OnPosterUrlChanged { get; set; }
+
+    [Parameter]
+    public bool IsSubmitting { get; set; }
+
+    private async Task OnPosterUrlChangedHandler()
+    {
+        // Trigger parent re-render when poster URL changes
+        await OnPosterUrlChanged.InvokeAsync();
+    }
+}
+
