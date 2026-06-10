@@ -1,17 +1,21 @@
 <div class="image-preview-container">
     <h2>Poster Image Preview</h2>
-    @if (!string.IsNullOrEmpty(CurrentPosterUrl))
-    {
-        <div class="image-preview">
-            <img src="@CurrentPosterUrl" alt="Movie Poster" />
-        </div>
-    }
-    else
-    {
-        <div class="image-placeholder">
-            <p>No poster URL provided.</p>
-        </div>
-    }
+    <div class="image-preview">
+        @if (!string.IsNullOrEmpty(CurrentPosterUrl))
+        {
+            <img @key="CurrentPosterUrl"
+                 src="@CurrentPosterUrl"
+                 alt="Movie Poster"
+                 referrerpolicy="no-referrer"
+                 onerror="this.style.display='none'" />
+        }
+        else
+        {
+            <div class="image-placeholder">
+                <p>No poster URL provided.</p>
+            </div>
+        }
+    </div>
 </div>
 
 @code {
@@ -25,4 +29,3 @@
         CurrentPosterUrl = PosterUrl;
     }
 }
-

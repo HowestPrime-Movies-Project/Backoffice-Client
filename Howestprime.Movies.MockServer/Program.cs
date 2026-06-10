@@ -21,6 +21,40 @@ api.MapPost("/movie-catalog", (RegisterMovieBody body, MockMoviesStore store) =>
     return TypedResults.Created($"/v1/api/movie-catalog/{movie.Id:D}", new { id = movie.Id });
 });
 
+api.MapGet("/movie-catalog/{id:guid}", IResult (Guid id, HttpRequest request, MockMoviesStore store) =>
+{
+    if (!HasUserRoleHeader(request))
+    {
+        return ValidationProblem(new Dictionary<string, string[]>
+        {
+            ["x-user-role"] = ["The x-user-role header is required."]
+        });
+    }
+
+    if (!store.TryGetMovie(id, out var movie) || movie is null)
+    {
+        return TypedResults.Problem(
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Movie not found",
+            detail: $"No movie with id '{id:D}' was found.");
+    }
+
+    return TypedResults.Ok(CreateMovieResponse(movie));
+});
+
+api.MapPut("/movie-catalog/{id:guid}", IResult (Guid id, ChangeMovieDetailsBody body, MockMoviesStore store) =>
+{
+    if (!store.TryUpdateMovie(id, body))
+    {
+        return TypedResults.Problem(
+            statusCode: StatusCodes.Status404NotFound,
+            title: "Movie not found",
+            detail: $"No movie with id '{id:D}' was found.");
+    }
+
+    return TypedResults.NoContent();
+});
+
 api.MapGet("/movie-catalog", (HttpRequest request, MockMoviesStore store, string? title, string? genres) =>
 {
     if (!HasUserRoleHeader(request))

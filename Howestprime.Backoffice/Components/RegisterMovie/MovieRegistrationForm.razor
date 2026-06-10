@@ -47,7 +47,7 @@
 
     <div class="form-group">
         <label for="posterUrl">Poster URL</label>
-        <InputText id="posterUrl" class="form-control" @bind-Value="RegistrationModel.PosterUrl" @onchange="OnPosterUrlChangedHandler" />
+        <InputText id="posterUrl" class="form-control" @bind-Value="RegistrationModel.PosterUrl" @bind-Value:after="OnPosterUrlChangedHandler" />
         <ValidationMessage For="@(() => RegistrationModel.PosterUrl)" />
     </div>
 
@@ -55,11 +55,11 @@
         <button type="submit" class="submit-button" disabled="@IsSubmitting">
             @if (IsSubmitting)
             {
-                <span><i class="fa-solid fa-spinner fa-spin"></i> Registering...</span>
+                <span><i class="fa-solid fa-spinner fa-spin"></i> Saving...</span>
             }
             else
             {
-                <span>Register Movie</span>
+                <span>@SubmitLabel</span>
             }
         </button>
     </div>
@@ -77,6 +77,9 @@
 
     [Parameter]
     public bool IsSubmitting { get; set; }
+
+    [Parameter]
+    public string SubmitLabel { get; set; } = "Register Movie";
 
     private async Task OnPosterUrlChangedHandler()
     {

@@ -35,6 +35,19 @@ public sealed class MovieService(IMovieCatalogApiClient movieCatalogApiClient) :
         }
     }
 
+    public async Task<Movie?> GetMovieById(Guid movieId)
+    {
+        try
+        {
+            var result = await movieCatalogApiClient.GetMovieByIdAsync(movieId);
+            return result.IsFailure ? null : result.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public async Task<string> RegisterMovie(RegisterMovieRequest movieRequest)
     {
         ArgumentNullException.ThrowIfNull(movieRequest);
@@ -46,6 +59,17 @@ public sealed class MovieService(IMovieCatalogApiClient movieCatalogApiClient) :
         }
 
         return result.Value?.Location ?? string.Empty;
+    }
+
+    public async Task UpdateMovieDetails(UpdateMovieDetailsRequest request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var result = await movieCatalogApiClient.UpdateMovieDetailsAsync(request);
+        if (result.IsFailure)
+        {
+            throw new InvalidOperationException(FormatError(result.Error));
+        }
     }
 
     private static string FormatError(ApiErrorResponse? error)

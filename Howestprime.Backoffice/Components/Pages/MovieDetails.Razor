@@ -1,0 +1,74 @@
+@page "/catalog/{Id:guid}"
+@rendermode InteractiveServer
+@using Howestprime.Backoffice.Components.RegisterMovie
+
+<link rel="stylesheet" href="css/register-movie.css" />
+<link rel="stylesheet" href="css/movie-catalog.css" />
+
+<div class="app-container">
+    <header class="app-header">
+        <i class="fa-solid fa-clapperboard"></i>
+        <h1>Movie Events</h1>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="/">Plan</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/catalog" class="active">Catalog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="movie-details-back">
+            <a href="/catalog" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Catalog
+            </a>
+        </div>
+
+        @if (IsLoading)
+        {
+            <div class="loading-indicator">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading movie...
+            </div>
+        }
+        else if (NotFound)
+        {
+            <div class="error-message">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Movie not found.</span>
+            </div>
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(SuccessMessage))
+            {
+                <div class="success-message">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>@SuccessMessage</span>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="error-message">
+                    <i class="fa-solid fa-exclamation-circle"></i>
+                    <span>@ErrorMessage</span>
+                </div>
+            }
+
+            <div class="register-movie-container">
+                <MovieRegistrationForm
+                    RegistrationModel="@EditModel"
+                    OnValidSubmit="@HandleValidSubmit"
+                    OnPosterUrlChanged="@HandlePosterUrlChanged"
+                    IsSubmitting="@IsSubmitting"
+                    SubmitLabel="Save Changes" />
+                <MoviePosterPreview PosterUrl="@EditModel.PosterUrl" />
+            </div>
+        }
+    </main>
+
+    <footer class="app-footer">
+        <h2>Howest prime - backoffice</h2>
+    </footer>
+</div>

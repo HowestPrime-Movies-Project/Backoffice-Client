@@ -34,4 +34,36 @@ public sealed class MovieCatalogApiClient(HttpClient httpClient, JsonSerializerO
 
         return SendForJsonAsync<MovieCollection>(message, ct);
     }
+
+    public Task<ApiResult<Movie>> GetMovieByIdAsync(Guid movieId, CancellationToken ct = default)
+    {
+        var message = CreateRequest(HttpMethod.Get, $"api/movie-catalog/{movieId:D}");
+        AddRequiredHeader(message, "x-user-role", "Manager");
+        return SendForJsonAsync<Movie>(message, ct);
+    }
+
+    public Task<ApiResult<Created>> UpdateMovieDetailsAsync(UpdateMovieDetailsRequest request, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var message = CreateRequest(HttpMethod.Put, $"api/movie-catalog/{request.MovieId:D}");
+        var genres = request.Genres
+            .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var actors = request.Actors
+            .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        SetJsonBody(message, new
+        {
+            title = request.Title,
+            description = request.Description,
+            posterUrl = request.PosterUrl,
+            releaseYear = request.ReleaseYear,
+            duration = request.Duration,
+            genres,
+            actors,
+            ageRating = request.AgeRating
+        });
+
+        return SendForCreatedAsync(message, ct);
+    }
 }

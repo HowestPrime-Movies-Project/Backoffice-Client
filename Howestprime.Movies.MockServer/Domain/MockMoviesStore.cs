@@ -47,6 +47,35 @@ public sealed class MockMoviesStore
         }
     }
 
+    public bool TryGetMovie(Guid movieId, out MovieEntity? movie)
+    {
+        lock (_sync)
+        {
+            movie = _movies.FirstOrDefault(candidate => candidate.Id == movieId);
+            movie = movie is null ? null : CloneMovie(movie);
+            return movie is not null;
+        }
+    }
+
+    public bool TryUpdateMovie(Guid movieId, ChangeMovieDetailsBody body)
+    {
+        lock (_sync)
+        {
+            var movie = _movies.FirstOrDefault(candidate => candidate.Id == movieId);
+            if (movie is null) return false;
+
+            movie.Title = body.Title;
+            movie.Description = body.Description;
+            movie.PosterUrl = body.PosterUrl;
+            movie.ReleaseYear = body.ReleaseYear;
+            movie.Duration = body.Duration;
+            movie.Genres = body.Genres.ToList();
+            movie.Actors = body.Actors.ToList();
+            movie.AgeRating = body.AgeRating;
+            return true;
+        }
+    }
+
     public bool TryGetRoom(Guid roomId, out RoomEntity? room)
     {
         lock (_sync)

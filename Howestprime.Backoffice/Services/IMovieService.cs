@@ -6,5 +6,7 @@ namespace Howestprime.Backoffice.Services;
 public interface IMovieService
 {
     Task<List<Movie>> GetMovies(string? title = null, string? genre = null, string? userRole = null);
+    Task<Movie?> GetMovieById(Guid movieId);
     Task<string> RegisterMovie(RegisterMovieRequest movieRequest);
+    Task UpdateMovieDetails(UpdateMovieDetailsRequest request);
 }

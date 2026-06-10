@@ -1,0 +1,130 @@
+/* Movie Catalog page styles */
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl) 0;
+}
+
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-main);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--color-text-dark);
+  transition: box-shadow var(--transition-speed), transform var(--transition-speed);
+}
+
+.movie-card:hover {
+  box-shadow: var(--shadow-standard);
+  transform: translateY(-3px);
+  border-color: var(--color-primary);
+}
+
+.movie-card-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  background-color: var(--color-bg-light);
+}
+
+.movie-card-poster img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-speed);
+}
+
+.movie-card:hover .movie-card-poster img {
+  transform: scale(1.04);
+}
+
+.movie-card-poster-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-medium);
+  font-size: var(--font-size-icon);
+}
+
+.movie-card-info {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.movie-card-title {
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  color: var(--color-text-dark);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.movie-card-year {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-medium);
+}
+
+.movie-card-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.genre-tag {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  font-size: 11px;
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+}
+
+/* Back link */
+.movie-details-back {
+  margin-bottom: var(--spacing-lg);
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-primary-dark);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: var(--spacing-xs) 0;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+/* Empty state */
+.empty-catalog {
+  text-align: center;
+  padding: var(--spacing-xxl);
+  color: var(--color-text-medium);
+  font-size: var(--font-size-lg);
+}
+
+.empty-catalog i {
+  font-size: var(--font-size-icon);
+  display: block;
+  margin-bottom: var(--spacing-lg);
+}

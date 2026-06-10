@@ -1,0 +1,67 @@
+@page "/catalog"
+@rendermode InteractiveServer
+
+<link rel="stylesheet" href="css/movie-catalog.css" />
+
+<div class="app-container">
+    <header class="app-header">
+        <i class="fa-solid fa-clapperboard"></i>
+        <h1>Movie Events</h1>
+        <nav class="header-nav">
+            <ul>
+                <li><a href="/">Plan</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/catalog" class="active">Catalog</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        @if (IsLoading)
+        {
+            <div class="loading-indicator">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading movies...
+            </div>
+        }
+        else if (Movies.Count == 0)
+        {
+            <div class="empty-catalog">
+                <i class="fa-solid fa-film"></i>
+                <p>No movies found in the catalog.</p>
+            </div>
+        }
+        else
+        {
+            <div class="movie-grid">
+                @foreach (var movie in Movies)
+                {
+                    <a href="/catalog/@movie.Id" class="movie-card">
+                        <div class="movie-card-poster">
+                            <div class="movie-card-poster-placeholder">
+                                <i class="fa-solid fa-film"></i>
+                            </div>
+                            @if (!string.IsNullOrEmpty(movie.PosterUrl))
+                            {
+                                <img src="@movie.PosterUrl" alt="@movie.Title" referrerpolicy="no-referrer" onerror="this.style.display='none'" />
+                            }
+                        </div>
+                        <div class="movie-card-info">
+                            <h3 class="movie-card-title">@movie.Title</h3>
+                            <span class="movie-card-year">@movie.ReleaseYear</span>
+                            <div class="movie-card-genres">
+                                @foreach (var genre in movie.Genres)
+                                {
+                                    <span class="genre-tag">@genre</span>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </main>
+
+    <footer class="app-footer">
+        <h2>Howest prime - backoffice</h2>
+    </footer>
+</div>
