@@ -20,7 +20,7 @@ jobs:
       - name: Make release
         run: |
           dotnet restore
-          dotnet publish src/Howestprime.Backoffice/ --os linux /t:PublishContainer /p:PublishProfile=test /p:ContainerImageName=howestprime-backoffice
+          dotnet publish Howestprime.Backoffice/Howestprime.Backoffice.csproj -c Release -o build
 
       - name: Zip the release
         run: |
