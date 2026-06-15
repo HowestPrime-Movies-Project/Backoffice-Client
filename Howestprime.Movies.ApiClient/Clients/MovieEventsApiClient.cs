@@ -32,14 +32,14 @@ public sealed class MovieEventsApiClient(HttpClient httpClient, JsonSerializerOp
             ("year", request.Year.ToString(CultureInfo.InvariantCulture)));
 
         var message = CreateRequest(HttpMethod.Get, path);
-        var result = await SendForJsonAsync<MovieEventCollection>(message, ct);
+        var result = await SendForJsonAsync<List<MovieEvent>>(message, ct);
 
         if (result.IsFailure)
         {
             return ApiResult<IReadOnlyList<MovieEvent>>.Failure(result.Error!);
         }
 
-        IReadOnlyList<MovieEvent> events = result.Value?.MovieEvents ?? [];
+        IReadOnlyList<MovieEvent> events = result.Value ?? [];
         return ApiResult<IReadOnlyList<MovieEvent>>.Success(events, result.StatusCode);
     }
 }
